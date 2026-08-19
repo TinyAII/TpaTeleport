@@ -1,0 +1,23 @@
+name: TpaTeleport
+version: 1.0.0
+main: com.mcadmin.tpa.TpaPlugin
+api-version: 1.18
+description: TPA 传送插件：请求同意传送 + tpahere 反向 + 防骚扰（TinyAII 出品）
+author: TinyAII
+commands:
+  传送:
+    description: 请求传送到指定玩家身边
+    aliases: [tpa]
+    usage: /传送 <玩家名>
+  传这里:
+    description: 请求指定玩家传送到你身边（反向）
+    aliases: [tpahere]
+    usage: /传这里 <玩家名>
+  同意:
+    description: 同意最近的传送请求
+    aliases: [tpy, tpacept]
+    usage: /同意 [玩家名]
+  拒绝:
+    description: 拒绝最近的传送请求
+    aliases: [tpn, tpdeny]
+    usage: /拒绝 [玩家名]
