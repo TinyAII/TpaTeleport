@@ -1,91 +1,81 @@
 # TPA 传送 TpaTeleport
 
-[![Paper](https://img.shields.io/badge/Paper-1.18%2B-brightgreen)](https://papermc.io)
-[![Java](https://img.shields.io/badge/Java-17%2B-orange)](https://www.java.com)
-[![Version](https://img.shields.io/badge/TpaTeleport-v1.0.0-blue)](https://github.com/TinyAII/TpaTeleport/releases)
+> 请求同意传送 + 反向 + 防骚扰，零依赖，Paper 1.18+。MIT 开源。
 
-请求同意式玩家传送插件：A 请求传到 B、B 聊天框点按钮同意/拒绝，支持反向传送 + 全套防骚扰机制。
+TPA 传送插件：玩家发起传送请求，对方同意才传送；支持反向请求（tpahere）；防骚扰（请求超时、传送冷却、拒绝后冷却禁请求、同时间最多 pending 3 个目标）。
 
-## 功能特性
+- 📨 **请求传送**：`/传送 <玩家>` 请求传送到对方身边
+- 🤝 **反向请求**：`/传这里 <玩家>` 请求对方传送到你身边
+- ✅ **同意 / 拒绝**：`/同意 [玩家]` / `/拒绝 [玩家]`
+- ⏳ **请求超时**：发出后对方 N 秒不处理自动取消
+- ❄️ **传送冷却**：传送完成后 N 秒内不能再请求
+- 🚫 **拒后冷却**：被拒绝后 N 秒内不能再请求该玩家
+- 📋 **防刷**：同一玩家同时最多 pending 3 个目标（防刷屏骚扰全服）
+- 🎨 品牌横幅 TinyAII；**MIT 开源**
 
-- 🚀 **请求传送**：`/传送 <玩家>` 请求传送到对方身边，对方同意后执行
-- 🔄 **反向传送**：`/传这里 <玩家>` 让对方传送到你身边（同样需对方同意）
-- 🖱️ **聊天框按钮**：收到请求显示 `[✅ 同意] [❌ 拒绝]`，鼠标点击即可处理；也可用指令 `/同意` `/拒绝`
-- ⏱️ **防骚扰全家桶**：
-  - 30 秒超时自动取消（config 可调）
-  - 传送后 10 秒冷却（防连刷）
-  - 重复请求拦截（同一目标只允许一条待处理）
-  - 每人最多 3 条待处理请求（防刷屏轰炸）
-  - 被拒绝后 10 分钟不能再请求同一人（防报复性骚扰）
-- ✅ **在线校验**：目标不在线直接提示，不会白等
+---
 
 ## 安装
 
 1. 下载 `tpa-teleport-1.0.0.jar`
-2. 放入服务器 `plugins/` 目录
-3. 重启服务器或执行 `reload`
-4. 完成！无任何前置依赖
+2. 放入 `plugins/`，重启
 
 ## 命令
 
-| 命令 | 说明 |
-| --- | --- |
-| `/传送 <玩家名>`（/tpa） | 请求传送到对方身边 |
-| `/传这里 <玩家名>`（/tpahere） | 请求对方传到你身边（反向） |
-| `/同意 [玩家名]`（/tpy） | 同意请求（多个请求时可指定玩家名） |
-| `/拒绝 [玩家名]`（/tpn） | 拒绝请求 |
+| 命令 | 别名 | 说明 |
+|---|---|---|
+| `/传送 <玩家>` | `/tpa` | 请求传送到对方身边 |
+| `/传这里 <玩家>` | `/tpahere` | 请求对方传送到你身边（反向） |
+| `/同意 [玩家]` | `/tpy`, `/tpaccept` | 同意最近的传送请求 |
+| `/拒绝 [玩家]` | `/tpn`, `/tpdeny` | 拒绝最近的传送请求 |
 
-## 配置（plugins/TpaTeleport/config.yml）
+## 配置（`plugins/TpaTeleport/config.yml`）
 
 ```yaml
 timeout-seconds: 30        # 请求超时（秒）
-cooldown-seconds: 10       # 传送后冷却（秒）
-deny-cooldown-seconds: 600 # 被拒绝后禁止再请求（秒）
-max-pending: 3             # 每人同时最多待处理请求数
+cooldown-seconds: 10        # 传送后冷却（秒）
+deny-cooldown-seconds: 600 # 拒绝后禁止再请求（秒）
+max-pending: 3              # 同时间最多 pending 请求数
 ```
 
-## 兼容性
+## 实现原理（开源可读）
 
-- Paper / Spigot / Purpur / Leaves 1.18+
-- Java 17+
-- 无任何前置依赖
+- 内存 Map 记录待处理请求（发起方→目标方 + 时间戳），`/同意` 触发 PlayerTeleportEvent 传送发起方到目标方
+- 防骚扰靠 config 四个时间参数（timeout / cooldown / deny-cooldown / max-pending）
+- 纯 Bukkit API（零 NMS）
 
-## 作者
+## 兼容
 
-TinyAII 工作室
+- Paper / Spigot / Purpur / Leaves 1.18+（建议 1.18+；纯 Bukkit 也支持 1.13+）
+- Java 21
+- 零依赖
 
-<details>
-<summary>🇬🇧 English Version (click to expand)</summary>
+## 开源许可
 
-# TPA Teleport
+**MIT License** — Copyright (c) 2026 TinyAII。源码见 `src/main/java/com/mcadmin/tpa/`，可自由使用/修改/分发，请保留版权与许可声明。
 
-Request-based player teleport plugin: A requests to teleport to B, B accepts/denies via clickable chat buttons. Includes reverse teleport (tpahere) and full anti-harassment protection.
+---
 
-## Features
+# TpaTeleport (English)
 
-- 🚀 **TPA**: `/tpa <player>` request to teleport to a player, executes after they accept
-- 🔄 **TPAHere**: `/tpahere <player>` request a player to teleport to you (also requires consent)
-- 🖱️ **Clickable buttons**: `[✅ Accept] [❌ Deny]` in chat, or use `/tpy` `/tpn` commands
-- ⏱️ **Anti-harassment**: 30s timeout, 10s cooldown, duplicate request blocking, max 3 pending per player, 10-min block after denial
-- ✅ **Online check**: instant feedback if target is offline
+Request-accept teleport + reverse + anti-harassment. MIT open source, zero deps, Paper 1.18+.
 
 ## Commands
+`/传送 <player>` (/tpa) · `/传这里 <player>` (/tpahere) · `/同意 [player]` (/tpy) · `/拒绝 [player]` (/tpn)
 
-| Command | Description |
-| --- | --- |
-| `/传送 <player>` (/tpa) | Request teleport to a player |
-| `/传这里 <player>` (/tpahere) | Request a player to teleport to you |
-| `/同意 [player]` (/tpy) | Accept a request |
-| `/拒绝 [player]` (/tpn) | Deny a request |
+## Config
+```yaml
+timeout-seconds: 30
+cooldown-seconds: 10
+deny-cooldown-seconds: 600
+max-pending: 3
+```
 
 ## Compatibility
+Paper / Spigot / Purpur / Leaves 1.18+, Java 21, zero dependencies
 
-- Paper / Spigot / Purpur / Leaves 1.18+
-- Java 17+
-- No dependencies
+## License
+**MIT** — Copyright (c) 2026 TinyAII. Source in `src/`. Free to use/modify/distribute; keep the copyright notice.
 
 ## Author
-
-TinyAII Studio
-
-</details>
+TinyAII · MIT 开源 · 零依赖
